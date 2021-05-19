@@ -10,7 +10,7 @@ let side = ""
 const url = "https://networking-pong.herokuapp.com/"
 const url_test = "http://localhost:3000"
 
-const socket = io(url_test, {
+const socket = io(url, {
     withCredentials: false,
 })
 
