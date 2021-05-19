@@ -5,8 +5,12 @@ const ctx = canvas.getContext("2d")
 let players = []
 let gameBall = null
 let username = ""
+let side = ""
 
-const socket = io("https://networking-pong.herokuapp.com/", {
+const url = "https://networking-pong.herokuapp.com/"
+const url_test = "http://localhost:3000"
+
+const socket = io(url_test, {
     withCredentials: false,
 })
 
@@ -15,6 +19,11 @@ const stopSpinners = () => {
 }
 socket.on("connect", () => {
     stopSpinners()
+})
+socket.on("playerCount", (_side) => {
+    console.log(side)
+    side = _side
+    setSide(side)
 })
 
 /*FUNCTIONS */
@@ -77,10 +86,10 @@ function clearBoard() {
 //called when starting a new round
 function startBoard() {
     /**fo real */
-    // username = $("#enter-username").val()
+    username = $("#enter-username").val()
 
     /**for testing */
-    username = Math.floor(Math.random() * 1000) + 1
+    // username = Math.floor(Math.random() * 1000) + 1
     console.log(username)
     $(".username").text(username)
 
@@ -99,6 +108,12 @@ function startBoard() {
 
     //game loop
     setInterval(updateGameArea, 20)
+}
+
+const setSide = (side) => {
+    console.log(side)
+    const num = side === "left" ? 1 : 2
+    $("#side").text("Waiting for another player to join...")
 }
 
 /*SOCKET LISTENERS */
@@ -120,7 +135,12 @@ socket.on("newMove", (mutatedPlayers) => {
     players = mutatedPlayers
 })
 
+socket.on("left", () => {
+    $("#side").show()
+})
+
 socket.on("startPong", (startBall) => {
+    $("#side").hide()
     gameBall = startBall
     updateGameBall()
 })
@@ -171,7 +191,7 @@ window.onload = function () {
     $("#go-again").prop("hidden", true)
 
     /*EVENT LISTENERS */
-    // $("#username-submit").click(startBoard)
+    $("#username-submit").click(startBoard)
     $(".toast").toast("show")
-    startBoard()
+    // startBoard()
 }
